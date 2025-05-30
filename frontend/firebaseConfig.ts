@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyB3gHx6FXAvqLx28MHZavCBUAjjwihULpM',
-  authDomain: 'taskmate-cb773.firebaseapp.com',
-  projectId: 'taskmate-cb773',
-  storageBucket: 'taskmate-cb773.firebasestorage.app',
-  messagingSenderId: '682821712421',
-  appId: '1:682821712421:web:4ffc1cbd26a3fa78f25dcc',
-  measurementId: 'G-24RWZ64HN6',
+  apiKey: import.meta.env.VITE_APP_ID,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGINGSENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENTID,
 };
 
 const app = initializeApp(firebaseConfig);
