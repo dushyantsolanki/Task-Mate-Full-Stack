@@ -25,4 +25,13 @@ const isUserActive = (userId) => {
   return activeUsers.has(userId);
 };
 
-export { addActiveUser, removeActiveUser, getActiveUsers, isUserActive };
+// Convert Map to plain object with arrays instead of Sets
+function serializeMapOfSets(map) {
+  const obj = {};
+  for (const [key, set] of map.entries()) {
+    obj[key] = Array.from(set);
+  }
+  return obj;
+}
+
+export { addActiveUser, removeActiveUser, getActiveUsers, isUserActive, serializeMapOfSets };

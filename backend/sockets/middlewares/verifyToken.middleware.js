@@ -1,15 +1,23 @@
-import jwt from 'jsonwebtoken';
+import { User } from '../../models/index.js';
+import mongoose from 'mongoose';
 
-export const verifyToken = (socket, next) => {
+export const verifyToken = async (socket, next) => {
   try {
-    const authHeader = socket.handshake.auth.token;
-    console.log(authHeader);
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return next(new Error('Missing or invalid Authorization token'));
+    const authHeader = socket.handshake.auth.userId;
+
+    if (!authHeader) {
+      return next(new Error('Missing or invalid Authorization Id'));
     }
-    const token = authHeader.split(' ')[1]; // Bearer <token>
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = decoded;
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(authHeader),
+      isDeleted: false,
+      isVerified: true,
+    });
+    if (!user) {
+      return next(new Error('User not found'));
+    }
+
+    socket.user = user;
 
     return next();
   } catch (err) {

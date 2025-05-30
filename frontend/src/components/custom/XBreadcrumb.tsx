@@ -2,7 +2,7 @@
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
 import React from "react";
-import { SidebarTrigger } from "../ui/sidebar";
+// import { SidebarTrigger } from "../ui/sidebar";
 export interface Crumb {
   label: string;
   link?: string; // if undefined, will be treated as current page
@@ -19,7 +19,6 @@ export const XBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ items }) => {
 
   return (
     <div className="flex items-center gap-2 px-4">
-      <SidebarTrigger className="-ml-1" />
       <Breadcrumb>
         <BreadcrumbList>
           {items.map((item, index) => (

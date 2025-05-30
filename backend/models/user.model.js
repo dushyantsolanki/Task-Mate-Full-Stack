@@ -1,10 +1,18 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, select: false, trim: true },
+    email: { type: String, required: true, trim: true },
+    password: {
+      type: String,
+      select: false,
+      trim: true,
+      required: function () {
+        return this.authProvider === 'local';
+      },
+    },
     avatar: { type: String },
     authProvider: {
       type: String,
@@ -16,9 +24,9 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'Role',
-      //   required: true,
+      default: 'Member',
     },
     projects: [
       {
@@ -35,9 +43,40 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+
+    otp: {
+      type: String,
+      select: false,
+    },
+    otpPurpose: {
+      type: String,
+      enum: ['verify_account', 'forgot_password'],
+      select: false,
+    },
+    otpExpiry: {
+      type: Date,
+      select: false,
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
+
+userSchema.pre('save', async function (next) {
+  if (this.isModified('password') && this.password) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 

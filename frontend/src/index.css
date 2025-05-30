@@ -56,6 +56,16 @@ body {
       background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
+  --animate-pulse: pulse var(--duration) ease-out infinite;
+  @keyframes pulse {
+    0%,
+    100% {
+      boxshadow: 0 0 0 0 var(--pulse-color);
+    }
+    50% {
+      boxshadow: 0 0 0 8px var(--pulse-color);
+    }
+  }
 }
 
 :root {
@@ -128,7 +138,6 @@ body {
 }
 
 /* Green color schema */
-
 /* :root {
   --radius: 0.5rem;
   --background: oklch(1 0 0);
@@ -207,9 +216,77 @@ body {
   }
 }
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Bell shake animation */
+@keyframes bell-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+}
+
+.animate-bell-shake {
+  animation: bell-shake 0.5s ease-in-out infinite;
+}
+
+/* Badge scale animation */
+@keyframes badge-scale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-badge-scale {
+  animation: badge-scale 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-bell-shake,
+  .animate-badge-scale {
+    animation: none;
+  }
+}
+
 /* .bg-image {
   background-image: url('../public/Frame1.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 } */
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border: none;
+}
+
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid-section,
+.fc .fc-col-header-cell,
+.fc .fc-daygrid-day {
+  border: none !important;
+}

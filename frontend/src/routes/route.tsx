@@ -1,19 +1,17 @@
-import { lazy, type FC, type JSX, type LazyExoticComponent } from 'react';
-import AuthLayout from '@/layout/AuthLayout';
-// import DashboardLayout from '../layouts/DashboardLayout';
-// import ErrorLayout from '../layouts/ErrorLayout';
-// import ProtectedRoute from './ProtectedRoute';
+import { lazy, type FC, type JSX, type LazyExoticComponent } from "react";
+import AuthLayout from "@/layout/AuthLayout";
+import ForgotPasswordForm from "@/form/ForgotPasswordForm";
+import ProtectedRoute from "@/components/app/ProtectedRoute";
+import PublicOnlyRoute from "@/components/app/PublicOnlyRoute";
 
-// Lazy-loaded pages
-const LoginForm = lazy(() => import('@/form/LoginForm'));
-const RegisterForm = lazy(() => import('@/form/RegisterForm'));
-const DashboardLayout = lazy(() => import('@/layout/DashboardLayout'));
-
+const LoginForm = lazy(() => import("@/form/LoginForm"));
+const RegisterForm = lazy(() => import("@/form/RegisterForm"));
+const OtpVerifyForm = lazy(() => import("@/form/OtpVerifyForm"));
+const DashboardLayout = lazy(() => import("@/layout/DashboardLayout"));
 
 const Home = () => {
   return <div>Home</div>;
-
-}
+};
 
 type RouteChild = {
   path: string;
@@ -30,17 +28,19 @@ export type RouteConfig = {
 export const routes: RouteConfig[] = [
   {
     layout: AuthLayout,
+    guard: PublicOnlyRoute,
     children: [
-      { path: '/login', element: <LoginForm />, allowedRoles: [] },
-      { path: '/register', element: <RegisterForm />, allowedRoles: [] }
-
+      { path: "/login", element: <LoginForm /> },
+      { path: "/register", element: <RegisterForm /> },
+      { path: "/verify-otp", element: <OtpVerifyForm /> },
+      { path: "/forgot-password", element: <ForgotPasswordForm /> },
     ],
   },
   {
     layout: DashboardLayout,
-    // guard: ProtectedRoute,
+    guard: ProtectedRoute,
     children: [
-      { path: '/dashboard', element: <Home />, allowedRoles: [] },
+      { path: "/dashboard", element: <Home /> },
       // { path: '/dashboard/profile', element: <Profile /> },
       // {
       //   path: '/dashboard/admin',
@@ -49,11 +49,4 @@ export const routes: RouteConfig[] = [
       // },
     ],
   },
-  //   {
-  //     layout: ErrorLayout,
-  //     children: [
-  //       { path: '/unauthorized', element: <Unauthorized /> },
-  //       { path: '*', element: <NotFound /> },
-  //     ],
-  //   },
 ];

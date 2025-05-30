@@ -1,29 +1,58 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { routes } from '@/routes/route.tsx';
-import { io, Socket } from "socket.io-client";
-import { useCookie } from '@reactuses/core'
+import { useSocket } from './hooks/useSocket';
+import { useAuthStore } from './store/authStore.ts';
+import AxiousInstance from './helper/AxiousInstance.tsx';
+import { messaging } from '../firebaseConfig.ts';
+import { getToken } from 'firebase/messaging';
+import { getCookie } from './lib/utils.ts';
+
 
 
 // import ProtectedRoute from './routes/ProtectedRoute';
 
 const App: React.FC = () => {
+  const { user } = useAuthStore()
+  const { connect, disconnect } = useSocket();
 
-  const [cookie] = useCookie('accessToken')
-  // console.log(cookie)
-  // const socket: Socket = io('http://localhost:3000', {
-  //   auth: {
-  //     token: `Bearer ${cookie}`,
-  //   },
-  //   transports: ["websocket"],
-  //   reconnection: true,
-  //   withCredentials: true,
-  // });
+  async function requestPermission() {
+    console.log('hello from firesbase setup from App.tsx')
+    try {
+      //requesting permission using Notification API
+      const permission = await Notification.requestPermission();
 
-  // socket.on("connected", () => {
-  //   console.log("Connected to server");
-  // });
+      if (permission === 'granted') {
+        const token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_VAPID_KEY
+        });
+        if (token && !!getCookie('accessToken')) {
+
+          await AxiousInstance.post(`/firebase/${user?.id}/token`, {
+            fcm_token: token,
+          });
+        }
+
+        //We can send token to server
+      } else if (permission === 'denied') {
+        //notifications are blocked
+        // alert('You denied for the notification');
+      }
+    } catch (error) {
+      console.log('Error :>', error);
+    }
+  }
+
+  useEffect(() => {
+    if (!user.id) {
+      disconnect();
+      console.error("No access token found in cookies");
+      return;
+    }
+    requestPermission()
+    connect(user.id as string);
+  }, [])
 
   return (
     <BrowserRouter>

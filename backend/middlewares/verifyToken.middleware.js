@@ -17,11 +17,11 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
-  } catch (error) {
-    logger.error('Token verification error:', error);
+  } catch (err) {
+    logger.error(err, 'Error in verifyToken');
     return res.status(403).json({ success: false, message: 'Invalid or expired token' });
   }
 };

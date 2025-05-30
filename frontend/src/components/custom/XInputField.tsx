@@ -7,7 +7,7 @@ interface XInputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     icon?: React.ReactNode;
     rightElement?: React.ReactNode; // like a button or icon
-    error?: string;
+    error?: string | boolean | null | undefined;
     className?: string;
     containerClassName?: string;
 }
@@ -38,13 +38,13 @@ export const XInputField = ({
                     {...props}
                     className={cn(
                         icon && "pl-10",
-                        error && "border-destructive ring-1 ring-destructive",
+                        error && "border-red-500 ring-1 ring-red-500",
                         className
                     )}
                 />
 
             </div>
-            {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+            {error && <p className="ml-1 text-sm text-red-500 mt-1.5">{error}</p>}
         </div>
     );
 };

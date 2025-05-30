@@ -1,71 +1,136 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XInputField } from "@/components/custom/XInputField"
-import { EyeIcon, Mail } from "lucide-react"
+import { Eye, EyeOff, Mail } from "lucide-react"
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useFormik, FormikProvider, Form } from "formik";
+import * as Yup from "yup";
+import axios from "axios"
+import { toast } from "sonner"
+import { useAuthStore } from "@/store/authStore"
+import { useState } from "react"
+import { useSocket } from "@/hooks/useSocket"
+
+
+const LoginSchema = Yup.object().shape({
+    email: Yup.string()
+        .email("Invalid email")
+        .required("Email is required"),
+    password: Yup.string().min(6, "Password too short").required("Password is required"),
+});
 
 export default function LoginForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+    const { login } = useAuthStore()
+    const { connect } = useSocket();
+    const [showPassword, setShowPassword] = useState(false)
+    const navigate = useNavigate()
+
+    const handleSubmit = async (values: any) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, values, { withCredentials: true });
+            const data = await response.data;
+            if (response.status === 200) {
+                toast.success("Login successful");
+                login(data.user)
+                console.log("User data:", data.user);
+                connect(data.user.id)
+                navigate("/dashboard");
+            }
+        } catch (error: any) {
+            toast.error(error.response.data.message || "Login failed");
+
+        }
+    };
+
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            password: "",
+        },
+        validationSchema: LoginSchema,
+        onSubmit: handleSubmit
+    });
     return (
         <>
-            <form className={cn("flex flex-col gap-6", className)} {...props}>
-                <div className="flex flex-col items-center gap-2 text-center">
+            <FormikProvider value={formik}>
+                <Form className={cn("flex flex-col gap-6", className)} {...props}>
 
-                    <h1 className="text-2xl font-bold"> <AnimatedShinyText className="inline-flex items-center justify-center  transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"> Login to your account </AnimatedShinyText></h1>
-                    <p className="text-balance text-sm text-muted-foreground " >
-                        Enter your email below to login to your account
-                    </p>
-                </div>
-                <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <XInputField
-                            id="email"
-                            name="email"
-                            label="Email"
-                            type="email"
-                            className="h-11"
-                            placeholder="m@example.com"
-                            icon={<Mail size={20} />}
-                            required
-                        />
+                    <div className="flex flex-col items-center gap-2 text-center">
+
+                        <h1 className="text-2xl font-bold"> <AnimatedShinyText className="inline-flex items-center justify-center  transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"> Login to your account </AnimatedShinyText></h1>
+                        <p className="text-balance text-sm text-muted-foreground " >
+                            Enter your email below to login to your account
+                        </p>
                     </div>
-                    <div className="grid gap-2">
-
-                        <XInputField
-                            id="password"
-                            name="password"
-                            label="Password"
-                            type="password"
-                            className="h-11"
-                            icon={<EyeIcon size={20} />}
-                            required
-                        />
-                        <div className="flex items-center">
-
-                            <a
-                                href="#"
-                                className="ml-auto text-sm underline-offset-4 hover:underline"
-                            >
-                                Forgot your password?
-                            </a>
+                    <div className="grid gap-6">
+                        <div className="grid gap-2">
+                            <XInputField
+                                id="email"
+                                name="email"
+                                label="Email"
+                                type="email"
+                                className="h-11"
+                                placeholder="m@example.com"
+                                icon={<Mail size={20} />}
+                                value={formik.values.email}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.email && formik.errors.email}
+                            />
                         </div>
+                        <div className="grid gap-2">
+
+                            <XInputField
+                                id="password"
+                                name="password"
+                                label="Password"
+                                className="h-11"
+                                type={showPassword ? "text" : "password"}
+                                icon={
+                                    <div className="flex items-center justify-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="text-muted-foreground hover:text-foreground"
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
+                                }
+                                value={formik.values.password}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.password && formik.errors.password}
+                            />
+                            <div className="flex items-center">
+
+                                <Link to="/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">   Forgot your password?</Link>
+
+                            </div>
+                        </div>
+                        <Button type="submit" className="w-full" disabled={formik.isSubmitting}>
+                            {formik.isSubmitting ? (
+                                <>
+                                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                    Please wait...
+                                </>
+                            ) : (
+                                "Login"
+                            )}
+                        </Button>
+                        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                            <span className="relative z-10 bg-background px-2 text-muted-foreground">
+                                Or continue with
+                            </span>
+                        </div>
+
                     </div>
-                    <Button type="submit" className="w-full">
-                        Login
-                    </Button>
-                    <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                        <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                            Or continue with
-                        </span>
-                    </div>
-
-                </div>
-
-            </form>
-
+                </Form>
+            </FormikProvider>
             <div className="my-6 flex flex-col md:flex-row gap-4">
                 {/* Google Login Button */}
                 <Button

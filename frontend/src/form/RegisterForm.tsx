@@ -1,28 +1,89 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XInputField } from "@/components/custom/XInputField"
-import { EyeIcon, Mail, User } from "lucide-react"
+import { Eye, EyeOff, Mail, User } from "lucide-react"
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useFormik, FormikProvider, Form } from "formik";
+import * as Yup from "yup";
+import axios from "axios"
+import { toast } from "sonner"
+import { useLocalStorage } from "@reactuses/core"
+import { useState } from "react"
+import { Label } from "@/components/ui/label"
+// import { UseLocalStorage } from "@reactuses/core"
+
+
+interface Payload {
+    firstname: string;
+    surname: string;
+    email: string;
+    password: string;
+}
+
+const RegisterSchema = Yup.object().shape({
+    firstname: Yup.string().required("First name is required"),
+    surname: Yup.string().required("Surname is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string()
+        .min(8, "Password must be at least 8 characters")
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain uppercase, lowercase, and number")
+        .required("Password is required"),
+    gender: Yup.string().required("Gender is required"),
+});
 
 export default function RegisterForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+    const [, setValue] = useLocalStorage("email", "");
+    const navigate = useNavigate()
+    const [showPassword, setShowPassword] = useState(false)
+
+    const handleRegister = async (values: Payload) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register`,
+                values
+            )
+
+            if (response.status === 201) {
+                toast.warning("Registration successful, please verify your email")
+                setValue(values.email)
+                navigate('/verify-otp')
+
+            }
+        } catch (error: any) {
+            toast.error(error.response.data.message || "Registration failed")
+            console.error("Error registering user:", error);
+        }
+    }
+
+    const formik = useFormik({
+        initialValues: {
+            firstname: "",
+            surname: "",
+            email: "",
+            password: "",
+            gender: "male",
+        },
+        validationSchema: RegisterSchema,
+        onSubmit: handleRegister
+    });
     return (
         <>
-            <form className={cn("flex flex-col gap-6", className)} {...props}>
-                <div className="flex flex-col items-center gap-2 text-center">
+            <FormikProvider value={formik}>
+                <Form className={cn("flex flex-col gap-6", className)} {...props}>
+                    <div className="flex flex-col items-center gap-2 text-center">
+                        <h1 className="text-2xl font-bold">
+                            <AnimatedShinyText className="inline-flex items-center justify-center transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+                                Register to your account
+                            </AnimatedShinyText>
+                        </h1>
+                    </div>
 
-                    <h1 className="text-2xl font-bold"> <AnimatedShinyText className="inline-flex items-center justify-center  transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"> Register to your account </AnimatedShinyText></h1>
-                    {/* <p className="text-balance text-sm text-muted-foreground " >
-                        Enter your email below to login to your account
-                    </p> */}
-                </div>
-                <div className="grid gap-6">
-                    <div className="flex flex-col md:flex-row gap-6">
-                        <div className="grid gap-2">
+                    <div className="grid gap-6">
+                        <div className="flex flex-col md:flex-row gap-6">
                             <XInputField
                                 id="firstname"
                                 name="firstname"
@@ -31,10 +92,11 @@ export default function RegisterForm({
                                 className="h-11"
                                 placeholder="John"
                                 icon={<User size={20} />}
-                                required
+                                value={formik.values.firstname}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.firstname && formik.errors.firstname}
                             />
-                        </div>
-                        <div className="grid gap-2">
                             <XInputField
                                 id="surname"
                                 name="surname"
@@ -43,11 +105,13 @@ export default function RegisterForm({
                                 className="h-11"
                                 placeholder="Gino"
                                 icon={<User size={20} />}
-                                required
+                                value={formik.values.surname}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.surname && formik.errors.surname}
                             />
                         </div>
-                    </div>
-                    <div className="grid gap-2">
+
                         <XInputField
                             id="email"
                             name="email"
@@ -56,53 +120,79 @@ export default function RegisterForm({
                             className="h-11"
                             placeholder="m@example.com"
                             icon={<Mail size={20} />}
-                            required
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={formik.touched.email && formik.errors.email}
                         />
-                    </div>
-                    <div className="grid gap-2">
 
                         <XInputField
                             id="password"
                             name="password"
                             label="Password"
-                            type="password"
                             className="h-11"
-                            icon={<EyeIcon size={20} />}
-                            required
+                            type={showPassword ? "text" : "password"}
+                            icon={
+                                <div className="flex items-center justify-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="text-muted-foreground hover:text-foreground"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                            }
+                            value={formik.values.password}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={formik.touched.password && formik.errors.password}
                         />
 
+                        <div className="grid gap-2">
+                            <Label htmlFor="color">Gender</Label>
+                            <Select
+                                value={formik.values.gender}
+                                onValueChange={(value) => formik.setFieldValue("gender", value)}
+                            >
+                                <SelectTrigger className="w-full py-[21px]">
+                                    <SelectValue placeholder="Select a gender" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Gender</SelectLabel>
+                                        {["male", "female", "other"].map((item) => (
+                                            <SelectItem key={item} value={item}>
+                                                {item.charAt(0).toUpperCase() + item.slice(1)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            {formik.touched.gender && formik.errors.gender && (
+                                <p className="text-sm text-red-500">{formik.errors.gender}</p>
+                            )}
+                        </div>
+
+                        <Button type="submit" className="w-full" disabled={formik.isSubmitting}>
+                            {formik.isSubmitting ? (
+                                <>
+                                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                    Please wait...
+                                </>
+                            ) : (
+                                "Register"
+                            )}
+                        </Button>
+
+                        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                            <span className="relative z-10 bg-background px-2 text-muted-foreground">
+                                Or continue with
+                            </span>
+                        </div>
                     </div>
-                    <div className="grid gap-2">
-
-                        <Select value={'male'} >
-                            <SelectTrigger className={"w-full py-[21px]"}>
-                                <SelectValue placeholder="Select a gender" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Gender</SelectLabel>
-                                    {['male', 'female', 'other'].map((item: string) => (
-                                        <SelectItem key={item} value={item}>
-                                            {item.charAt(0).toUpperCase() + item.slice(1)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Button type="submit" className="w-full">
-                        Register
-                    </Button>
-                    <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                        <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                            Or continue with
-                        </span>
-                    </div>
-
-                </div>
-
-            </form>
-
+                </Form>
+            </FormikProvider>
             <div className="my-6 flex flex-col justify-center md:flex-row gap-4">
                 {/* Google Login Button */}
                 <Button
