@@ -7,10 +7,9 @@ import jwt from 'jsonwebtoken';
 
 const COOKIE_OPTIONS = {
   httpOnly: false,
-  secure: false,
+  secure: true,
   sameSite: 'none',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  domain: 'https://683f0cec02097c30766e4b37--taskmatedev.netlify.app',
 };
 
 export const loginWithGoogle = async (req, res) => {
@@ -150,10 +149,9 @@ export const refreshAccessToken = async (req, res) => {
     res
       .cookie('accessToken', newAccessToken, {
         httpOnly: false,
-        secure: false,
+        secure: true,
         sameSite: 'none',
         maxAge: 15 * 60 * 1000, // 15 minutes
-        domain: 'https://683f0cec02097c30766e4b37--taskmatedev.netlify.app',
       })
       .cookie('refreshToken', newRefreshToken, COOKIE_OPTIONS);
 
