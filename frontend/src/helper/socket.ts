@@ -5,7 +5,7 @@ class SocketManager {
 
   connect(userId: string) {
     if (!this.socket) {
-      this.socket = io(import.meta.env.VITE_SOCKET_URL as string, {
+      this.socket = io(import.meta.env.VITE_SOCKET_URL || ('http://localhost:3000' as string), {
         auth: {
           userId,
         },
