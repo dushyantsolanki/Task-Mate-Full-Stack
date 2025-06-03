@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 
 const COOKIE_OPTIONS = {
   httpOnly: false,
-  secure: true,
+  secure: false,
   sameSite: 'None',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
