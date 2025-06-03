@@ -9,7 +9,7 @@ import { SocketProvider } from './contexts/SocketContext.tsx'
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
   <SocketProvider>
-    <ThemeProvider defaultTheme='light' storageKey="vite-ui-theme">
+    <ThemeProvider storageKey="vite-ui-theme">
       <App />
       <Toaster position='top-right' expand={true} richColors={true} closeButton={true} />
     </ThemeProvider>
