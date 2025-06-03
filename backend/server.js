@@ -136,7 +136,7 @@ const notification_data = [
 
 // notification_migration(notification_data);
 
-server.listen(PORT, HOST, async () => {
+server.listen(PORT, async () => {
   await connectDB();
   console.log(
     `Server is running........... \nLocal Network : http://localhost:${PORT} \n${
