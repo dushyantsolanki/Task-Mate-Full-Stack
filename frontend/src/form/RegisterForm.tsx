@@ -43,7 +43,7 @@ export default function RegisterForm({
 
     const handleRegister = async (values: Payload) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/register`,
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'https://task-mate-full-stack.onrender.com/api/v1'}/auth/register`,
                 values
             )
 

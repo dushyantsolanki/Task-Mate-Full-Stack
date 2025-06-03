@@ -31,7 +31,7 @@ export default function LoginForm({
 
     const handleSubmit = async (values: any) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/login`, values, { withCredentials: true });
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'https://task-mate-full-stack.onrender.com/api/v1'}/auth/login`, values, { withCredentials: true });
             const data = await response.data;
             if (response.status === 200) {
                 toast.success("Login successful");
