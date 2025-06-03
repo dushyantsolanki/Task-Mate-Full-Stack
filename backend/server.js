@@ -32,6 +32,7 @@ app.use(
       'http://192.168.0.133:5173',
       'http://localhost:4173',
       'http://192.168.83.111:5173',
+      'https://683f0cec02097c30766e4b37--taskmatedev.netlify.app',
     ],
     // origin: ['*'],
     credentials: true,
@@ -78,10 +79,10 @@ app.use('/api/v1', indexRoute);
 
 //  Frontend files serving via a backend
 
-app.use(express.static(path.join(__dirname, '/frontend/dist')));
-app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
-});
+// app.use(express.static(path.join(__dirname, '/frontend/dist')));
+// app.get('/', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+// });
 
 const notification_migration = async (data) => {
   try {
