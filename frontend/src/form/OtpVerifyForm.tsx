@@ -37,7 +37,7 @@ export default function OtpVerifyForm({
     const handleOTPVerification = async (values: string) => {
         setIsLoading(true)
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/auth/verify-otp`, { otp: values, email })
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/verify-otp`, { otp: values, email })
             const data = await response.data
             if (response.status === 201) {
                 toast.success(data.message)
@@ -100,7 +100,7 @@ export default function OtpVerifyForm({
         if (canResend) {
             setIsLoading(true)
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/auth/resend-otp`, { email, purpose: 'verify_account' })
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/resend-otp`, { email, purpose: 'verify_account' })
                 const data = await response.data
                 if (response.status === 201) {
                     toast.success(data.message)

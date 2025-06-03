@@ -57,7 +57,7 @@ export default function ForgotPasswordFlow({
         onSubmit: async (values) => {
             setIsLoading(true)
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/auth/forgot-password`, values)
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/forgot-password`, values)
 
                 if (response.status === 201) {
                     toast.success('OTP send successfully.')
@@ -84,7 +84,7 @@ export default function ForgotPasswordFlow({
         onSubmit: async (values) => {
             setIsLoading(true)
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/auth/forgot-password/reset-password`, { email, otp, newPassword: values.confirmPassword })
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/forgot-password/reset-password`, { email, otp, newPassword: values.confirmPassword })
 
                 if (response.status === 201) {
                     toast.success('OTP verified successfully.')
@@ -121,12 +121,10 @@ export default function ForgotPasswordFlow({
     const handleOtpChange = async (value: string) => {
         setOtp(value)
 
-        console.log(value)
-
         if (value.length === otpLength) {
             setIsLoading(true)
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/auth/forgot-password/verify-otp`, { email, otp: value })
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/forgot-password/verify-otp`, { email, otp: value })
 
                 if (response.status === 200) {
                     toast.success('OTP verified successfully.')
@@ -147,7 +145,7 @@ export default function ForgotPasswordFlow({
         if (canResend) {
             setIsLoading(true)
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/auth/forgot-password`, { email })
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://task-mate-full-stack.onrender.com/api/v1'}/auth/forgot-password`, { email })
 
                 if (response.status === 201) {
                     toast.success('OTP send successfully.')
