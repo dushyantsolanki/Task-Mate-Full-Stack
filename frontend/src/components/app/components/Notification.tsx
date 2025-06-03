@@ -8,12 +8,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge" // ✅ Make sure Badge is imported
+import { Badge } from "@/components/ui/badge"
 
 import { useSocket } from "@/hooks/useSocket"
 import AxiousInstance from "@/helper/AxiousInstance"
 import moment from "moment"
-import { useNavigate } from "react-router-dom" // ✅ Navigation
+import { useNavigate } from "react-router-dom"
 
 interface NotificationProps {
     className?: string
@@ -31,14 +31,14 @@ interface NotificationItem {
 export default function Notification({ className = "" }: NotificationProps) {
     const { on, off, enableSound } = useSocket()
     const [notificationData, setNotificationData] = useState<NotificationItem[]>([])
-    const navigate = useNavigate() // ✅ useNavigate
+    const navigate = useNavigate()
 
     const getAllNotification = async () => {
         try {
             const response = await AxiousInstance.get('/notification')
             if (response.status === 200) {
                 setNotificationData(response.data.notifications)
-                console.log('data ::: ', response.data.notifications)
+
             }
         } catch (error: any) {
             console.log('Error ', error)
@@ -54,7 +54,6 @@ export default function Notification({ className = "" }: NotificationProps) {
 
         const handleNotification = (data: any) => {
             enableSound()
-            console.log('socket io ::: ', data)
             const mappedNotifications = data.notification.map((notif: any) => ({
                 _id: notif._id,
                 type: notif.type,
@@ -143,7 +142,7 @@ export default function Notification({ className = "" }: NotificationProps) {
                             >
                                 <div className="text-sm text-muted-foreground mb-1">{notification.body}</div>
                                 <div className="text-xs text-muted-foreground">
-                                    {moment(notification.createdAt).format('DD-MM-YYYY A')}
+                                    {moment(notification.createdAt).format('DD MMM YYYY, hh:mm A')}
                                 </div>
                             </div>
                         </DropdownMenuItem>

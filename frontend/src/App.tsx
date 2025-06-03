@@ -25,7 +25,7 @@ const App: React.FC = () => {
 
       if (permission === 'granted') {
         const token = await getToken(messaging, {
-          vapidKey: import.meta.env.VITE_VAPID_KEY || 'BJSXm1Vpz4QQNJEtX7D10h_i8Je1facTne27TN7ii912JiPctnmcHI6b2mt2F16j9JQZ1r3RAIyZUPZluEYUM1c'
+          vapidKey: import.meta.env.VITE_VAPID_KEY
         });
         if (token && !!getCookie('accessToken')) {
 

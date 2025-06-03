@@ -98,6 +98,8 @@ const BigCalendar = () => {
         onSubmit: (values) => {
             handleSaveEvent(values);
         },
+        validateOnChange: false,
+        validateOnBlur: true,
     });
 
     // Navigate to previous or next month
@@ -141,7 +143,6 @@ const BigCalendar = () => {
     };
 
     const openEditEventSheet = (event: any) => {
-        console.log(event)
         setEditingEvent(event);
         const startDate = moment.tz(event.start, 'Asia/Kolkata');
         const endDate = event.end ? moment.tz(event.end, 'Asia/Kolkata') : startDate.clone().add(1, 'hour');
@@ -370,7 +371,7 @@ const BigCalendar = () => {
                                     <div className="flex gap-2  justify-center mt-4">
                                         {editingEvent && (
                                             <Button
-                                                type="button"
+                                                type="submit"
                                                 variant="destructive"
                                                 onClick={handleDeleteEvent}
                                                 className="flex items-center gap-2"
