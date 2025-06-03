@@ -14,6 +14,7 @@ import { initSocketIO } from './sockets/index.js';
 import './configs/firebase.config.js';
 import './crons/calendar.jobs.js';
 import Notification from './models/notification.model.js';
+import path from 'path';
 // passport configurations
 configurePassport();
 
@@ -42,6 +43,7 @@ app.use(passport.initialize());
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST;
+const __dirname = path.resolve();
 
 // function to get the IP address of the machine
 const getIPAdress = () => {
@@ -73,6 +75,13 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1', indexRoute);
+
+//  Frontend files serving via a backend
+
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+});
 
 const notification_migration = async (data) => {
   try {

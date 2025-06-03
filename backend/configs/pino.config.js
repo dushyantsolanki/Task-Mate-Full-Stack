@@ -1,11 +1,10 @@
-// logger.ts
 import pino from 'pino';
 import { join } from 'path';
 import fs from 'fs';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const logFilePath = join(process.cwd(), 'logs', 'app.log');
+const logFilePath = join(process.cwd(), 'backend', 'logs', 'app.log');
 
 if (!fs.existsSync(logFilePath)) {
   fs.mkdirSync('logs', { recursive: true }); // ensure logs folder exists other wise recursive will create it
