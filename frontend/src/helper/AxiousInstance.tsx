@@ -2,7 +2,7 @@ import { getCookie } from '@/lib/utils';
 import axios from 'axios';
 
 const AxiousInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'https://task-mate-full-stack.onrender.com/api/v1',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     withCredentials: true
 });
 
