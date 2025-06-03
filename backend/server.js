@@ -32,7 +32,7 @@ app.use(
       'http://192.168.0.133:5173',
       'http://localhost:4173',
       'http://192.168.83.111:5173',
-      'https://683f0cec02097c30766e4b37--taskmatedev.netlify.app',
+      'https://taskmatedev.netlify.app',
     ],
     // origin: ['*'],
     credentials: true,
