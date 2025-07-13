@@ -3,6 +3,10 @@ import AuthLayout from "@/layout/AuthLayout";
 import ForgotPasswordForm from "@/form/ForgotPasswordForm";
 import ProtectedRoute from "@/components/app/ProtectedRoute";
 import PublicOnlyRoute from "@/components/app/PublicOnlyRoute";
+import { Search } from "@/pages/Search";
+import { Dashboard } from "@/components/app/components/Dashboard";
+import { Todo } from "@/components/app/components/Todo";
+import Profile from "@/components/app/components/Profile";
 
 const LoginForm = lazy(() => import("@/form/LoginForm"));
 const RegisterForm = lazy(() => import("@/form/RegisterForm"));
@@ -26,6 +30,7 @@ export type RouteConfig = {
 };
 
 export const routes: RouteConfig[] = [
+
   {
     layout: AuthLayout,
     guard: PublicOnlyRoute,
@@ -40,7 +45,10 @@ export const routes: RouteConfig[] = [
     layout: DashboardLayout,
     guard: ProtectedRoute,
     children: [
-      { path: "/dashboard", element: <Home /> },
+      { path: "/dashboard", element: <Dashboard /> },
+      { path: "/search", element: <Search /> },
+      { path: "/todo", element: <Todo /> },
+      { path: "/settings/profile", element: <Profile /> },
       // { path: '/dashboard/profile', element: <Profile /> },
       // {
       //   path: '/dashboard/admin',
